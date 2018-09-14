@@ -1,6 +1,8 @@
 /*
 *Team:
-*
+*Aarón Garcia - A0103957
+*Daniela Garcia - A01281919
+*Edagr Lopez - A01039505
 *Valentin Trujillo - A01328426
 *
 */
@@ -83,8 +85,8 @@ void extractURL(string folder, string fileName, string url, string &uri){
   }
 }
 
-int main(){
 
+int main(){
     string const url = "http://javax.mty.itesm.mx/redes2/";
     string folder = "outputs/"; //Make sure this folder exists, if not err 256 is thrown
     string fileName = "insideOutput";
@@ -97,7 +99,6 @@ int main(){
 
     extractURL(folder, fileName, url, uri);
 
-    //Una vez que hemos extraido los url, aqui podemos usar los hilos, uno por cara link principal.
     while (!linksToVisit.empty()){
        uri = linksToVisit.front();
        exLinkSearch(url+uri, command, folder, fileName+to_string(n));  //Get links from front URI
