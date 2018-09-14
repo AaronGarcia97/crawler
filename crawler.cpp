@@ -12,8 +12,14 @@
 #include <fstream>
 #include <queue>
 #include <unordered_set>
+#include <vector>
 
 using namespace std;
+
+//create data structures
+queue <string> linksToVisit;
+unordered_set <string> visitedLinks;
+vector<string> visitedLinksList;
 
 //Check if processor is available, if not exit
 void processorAvailableDoNext(){
@@ -36,9 +42,13 @@ string buildCommand(string action, string url, string pathToFile){
   return command;
 }
 
+//Executes command that searches for children URIs
 int exLinkSearch(string url, string command, string folder, string fileName ){
+
     command = buildCommand("./parserInside ", url, folder+fileName);
+
     processorAvailableDoNext();
+
     cout << "Executing command " << command << " ..." << endl;
     int err; //1 = error, 0 = success
 
@@ -52,32 +62,56 @@ int exLinkSearch(string url, string command, string folder, string fileName ){
     return 0;
 }
 
-int main(){
-    //create data structures
-    queue <string> linksToVisit;
-    unordered_set <string> visitedLinks;
+//Checks if is a pdf or ppt
+bool isPdfOrPpt(const string uri){
+    string uriEnding = uri.substr(uri.length()-4);
 
-    string url = "http://javax.mty.itesm.mx/redes2/";
+    if( uriEnding == ".pdf" || uriEnding == ".ppt" ){
+      return true;
+    }
+    return false;
+}
+
+// Function that extracts Urls From specified file and pushes them to the queue if nto visited
+void extractURL(string folder, string fileName, string url, string &uri){
+  ifstream infile(folder + fileName);
+  while (infile >> uri) { //mientras haya linea
+      if(visitedLinks.find(url+uri) == visitedLinks.end() && !isPdfOrPpt(uri)){ //si no lo hemos visiatdo el link && Si no es pdf o ppt              //
+          linksToVisit.push(uri);                  //la metemos al queue
+          visitedLinksList.push_back(uri);        //metemos uri a la lista (vector)
+      }
+  }
+}
+
+int main(){
+
+    string const url = "http://javax.mty.itesm.mx/redes2/";
     string folder = "outputs/"; //Make sure this folder exists, if not err 256 is thrown
     string fileName = "insideOutput";
     string command = "";
-    int n = 0;
-    string a = "";
+    string uri = "";
+
+    int n = 1;
+
     exLinkSearch(url, command, folder, fileName);
 
-    //extracting Urls From File Created
-    ifstream infile("./"+folder+"/" + fileName);
-    while (infile >> a) {
-        linksToVisit.push(a);
-    }
+    extractURL(folder, fileName, url, uri);
 
-// Una vez que hemos extraido una vez los url, aqui podemos usar los hilos, uno por cara link principal.
+    //Una vez que hemos extraido los url, aqui podemos usar los hilos, uno por cara link principal.
     while (!linksToVisit.empty()){
-       a = linksToVisit.front();
-       exLinkSearch(url+a, command, folder, fileName+to_string(n));
-
+       uri = linksToVisit.front();
+       exLinkSearch(url+uri, command, folder, fileName+to_string(n));  //Get links from front URI
        linksToVisit.pop();
+       extractURL(folder, fileName+to_string(n), url, uri);  //Push new links to the queue
        n++;
+       if(n == 100) break; //Temporal stop
     }
+
+    cout << "################################################################################" << endl;
+    //Display visited URIs
+    for(int i=0; i < visitedLinksList.size(); ++i){
+      cout << i+1 << ": " << visitedLinksList[i] << endl;
+    }
+
     return 0;
 }
