@@ -1,7 +1,15 @@
+/*
+*Team:
+*
+*Valentin Trujillo - A01328426
+*
+*/
+
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <fstream>
 #include <queue>
 #include <unordered_set>
 
@@ -28,8 +36,23 @@ string buildCommand(string action, string url, string pathToFile){
   return command;
 }
 
-int main()
-{
+int exLinkSearch(string url, string command, string folder, string fileName ){
+    command = buildCommand("./parserInside ", url, folder+fileName);
+    processorAvailableDoNext();
+    cout << "Executing command " << command << " ..." << endl;
+    int err; //1 = error, 0 = success
+
+    if ((err = system(command.c_str()))){//Error >= 1, system call with char ptr
+        cout << "There was an error " << err << endl;
+        return 1;
+    }
+    else{ //Success
+        cout << "Result stored at " << folder << fileName << " file" << endl;
+    }
+    return 0;
+}
+
+int main(){
     //create data structures
     queue <string> linksToVisit;
     unordered_set <string> visitedLinks;
@@ -38,33 +61,23 @@ int main()
     string folder = "outputs/"; //Make sure this folder exists, if not err 256 is thrown
     string fileName = "insideOutput";
     string command = "";
+    int n = 0;
+    string a = "";
+    exLinkSearch(url, command, folder, fileName);
 
-    //Ask for user input url here in the future
-
-    //Build command to b executed
-    command = buildCommand("./parserInside ", url, folder+fileName);
-
-    processorAvailableDoNext();
-
-    cout << "Executing command " << command << " ..." << endl;
-
-    int err; //1 = error, 0 = success
-
-    if ((err = system(command.c_str()))){ //Error >= 1, system call with char ptr
-        cout << "There was an error " << err << endl;
-        return 1;
-    }
-    else{ //Success
-        cout << "Result stored at " << folder << fileName << " file" << endl;
+    //extracting Urls From File Created
+    ifstream infile("./"+folder+"/" + fileName);
+    while (infile >> a) {
+        linksToVisit.push(a);
     }
 
-    //If error everything went succesfull (error = 0) then do:
-      //extractUrlsFromFileCreated(folder+fileName);
-      //put them in a queue
-      //search links inside of queue.front()
-      //insert queue.front() to set
-      //queue.pop()
-      //repeat with every URL, until queue is empty
+// Una vez que hemos extraido una vez los url, aqui podemos usar los hilos, uno por cara link principal.
+    while (!linksToVisit.empty()){
+       a = linksToVisit.front();
+       exLinkSearch(url+a, command, folder, fileName+to_string(n));
 
+       linksToVisit.pop();
+       n++;
+    }
     return 0;
 }
