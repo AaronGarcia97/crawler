@@ -1,0 +1,4 @@
+#!/bin/bash
+#Looks for every link that point to external websites
+
+curl $1 | grep href | awk '{for(i = 0;i < NF; i++){if(substr($i,0,4) == "href"){print $i}}}' | grep http | awk -F '\"' -v len=$2 '{if(length($2) < len ) print $2}'
