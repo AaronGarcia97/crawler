@@ -52,7 +52,16 @@ int exLinkSearch(string url, string command, string folder, string fileName ){
     return 0;
 }
 
+bool isPdf(const string str){
+    return (str.compare(str.size() - ending.size(), ending.size(), 
+".pdf")) ? false : true; 
+
+}
+
+
 int main(){
+
+
     //create data structures
     queue <string> linksToVisit;
     unordered_set <string> visitedLinks;
@@ -65,12 +74,7 @@ int main(){
     string a = "";
     exLinkSearch(url, command, folder, fileName);
 
-    //extracting Urls From File Created
-    ifstream infile("./"+folder+"/" + fileName);
-    while (infile >> a) {
-        linksToVisit.push(a);
-    }
-
+ 
 // Una vez que hemos extraido una vez los url, aqui podemos usar los hilos, uno por cara link principal.
     while (!linksToVisit.empty()){
        a = linksToVisit.front();
