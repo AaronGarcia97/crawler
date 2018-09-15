@@ -80,6 +80,7 @@ void extractURL(string folder, string fileName, string url, string &uri){
   while (infile >> uri) { //mientras haya linea
       if(visitedLinks.find(url+uri) == visitedLinks.end() && !isPdfOrPpt(uri)){ //si no lo hemos visiatdo el link && Si no es pdf o ppt              //
           linksToVisit.push(uri);                  //la metemos al queue
+          visitedLinks.insert(url+uri);           //lo metemos al set
           visitedLinksList.push_back(uri);        //metemos uri a la lista (vector)
       }
   }
@@ -105,7 +106,6 @@ int main(){
        linksToVisit.pop();
        extractURL(folder, fileName+to_string(n), url, uri);  //Push new links to the queue
        n++;
-       if(n == 100) break; //Temporal stop
     }
 
     cout << "################################################################################" << endl;
