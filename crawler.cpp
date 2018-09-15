@@ -1,11 +1,4 @@
-/*
-*Team:
-*Aarón Garcia - A0103957
-*Daniela Garcia - A01281919
-*Edagr Lopez - A01039505
-*Valentin Trujillo - A01328426
-*
-*/
+//by Aarón Garcia, Daniela Garcia, Edagr Lopez, Valentin Trujillo
 
 #include <iostream>
 #include <stdlib.h>
