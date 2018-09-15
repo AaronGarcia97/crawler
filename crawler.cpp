@@ -98,6 +98,7 @@ int main(){
        exLinkSearch(url+uri, command, folder, fileName+to_string(n));  //Get links from front URI
        linksToVisit.pop();
        extractURL(folder, fileName+to_string(n), url, uri);  //Push new links to the queue
+       if(n == 300) break;                //If stuff gets out of control(or page too big) break it at 300
        n++;
     }
 
