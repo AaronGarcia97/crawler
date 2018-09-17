@@ -58,6 +58,12 @@ int exLinkSearch(string url, string command, string folder, string fileName ){
 }
 
 //Checks if is a pdf or ppt
+/*
+UPGRADE:
+  Create an unordered_set with common file terminations that we don't want to add
+  and check for set.find(uriEnding) each time, so that we can check
+  for multiple links in O(1). Load the un_set at the beginnning.
+*/
 bool isPdfOrPpt(const string uri){
     if(uri.length() < 4) return false;
 
@@ -86,7 +92,7 @@ void extractURL(string folder, string fileName, string url, string &uri){
 
 
 int main(){
-    string const url = "https://www.dinlabel.com/";//http://javax.mty.itesm.mx/redes1/
+    string const url = "https://www.dinlabel.com/"; //"https://www.dinlabel.com/";//http://gigamonkeys.com/book/";//http://javax.mty.itesm.mx/redes1/
     string folder = "outputs/"; //Make sure this folder exists, if not err 256 is thrown
     string fileName = "insideOutput";
     string command = "";
