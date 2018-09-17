@@ -99,17 +99,22 @@ int main(){
     string uri = "";
 
     int n = 1;
+    int maxLinks = 0;
+
+    do{
+      cout << "Max links(Limit 300): ";
+      cin >> maxLinks;
+    }while(maxLinks > 300);
 
     exLinkSearch(url, command, folder, fileName);
 
     extractURL(folder, fileName, url, uri);
 
-    while (!linksToVisit.empty()){
+    while (!linksToVisit.empty() && n <= maxLinks){ //If stuff gets out of control(or page too big) break it at 300
        uri = linksToVisit.front();
        exLinkSearch(url+uri, command, folder, fileName+to_string(n));  //Get links from front URI
        linksToVisit.pop();
        extractURL(folder, fileName+to_string(n), url, uri);  //Push new links to the queue
-       if(n == 300) break;                //If stuff gets out of control(or page too big) break it at 300
        n++;
     }
 
