@@ -1,4 +1,4 @@
 #!/bin/bash
 #Looks for every link that points to he same website
 
-curl $1 | awk '/href/{for(i=0;i<NF;i++){if(substr($i,0,4) == "href"){print $i}}}' | awk -F '\"' '!/:/{print $2}'
+curl $1 | awk '/href/{for(i=1;i<=NF;i++){if(substr($i,0,4) == "href"){print $i}}}' | awk -F '\"' '!/:/{print $2}'
