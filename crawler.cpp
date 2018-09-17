@@ -59,6 +59,8 @@ int exLinkSearch(string url, string command, string folder, string fileName ){
 
 //Checks if is a pdf or ppt
 bool isPdfOrPpt(const string uri){
+    if(uri.length() < 4) return false;
+
     string uriEnding = uri.substr(uri.length()-4);
 
     if( uriEnding == ".pdf" || uriEnding == ".ppt" ){
@@ -67,21 +69,24 @@ bool isPdfOrPpt(const string uri){
     return false;
 }
 
-// Function that extracts Urls From specified file and pushes them to the queue if nto visited
+// Function that extracts Urls From specified file and
+// pushes them to the queue if not visited
 void extractURL(string folder, string fileName, string url, string &uri){
   ifstream infile(folder + fileName);
   while (infile >> uri) { //mientras haya linea
-      if(visitedLinks.find(url+uri) == visitedLinks.end() && !isPdfOrPpt(uri)){ //si no lo hemos visiatdo el link && Si no es pdf o ppt              //
+      if( visitedLinks.find(url+uri) == visitedLinks.end() && !isPdfOrPpt(uri)){ //si no lo hemos visiatdo el link && Si no es pdf o ppt              //
+          cout << "## Inserting... " << uri << endl;
           linksToVisit.push(uri);                  //la metemos al queue
           visitedLinks.insert(url+uri);           //lo metemos al set
           visitedLinksList.push_back(uri);        //metemos uri a la lista (vector)
+          cout << "XX DONE ------> " << linksToVisit.back() << endl;
       }
   }
 }
 
 
 int main(){
-    string const url = "http://javax.mty.itesm.mx/redes2/";
+    string const url = "https://www.dinlabel.com/";//http://javax.mty.itesm.mx/redes1/
     string folder = "outputs/"; //Make sure this folder exists, if not err 256 is thrown
     string fileName = "insideOutput";
     string command = "";
