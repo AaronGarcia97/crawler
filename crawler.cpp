@@ -8,6 +8,7 @@
 #include <queue>
 #include <unordered_set>
 #include <vector>
+#include <thread>
 
 using namespace std;
 
@@ -15,6 +16,12 @@ using namespace std;
 queue <string> linksToVisit;
 unordered_set <string> visitedLinks;
 vector<string> visitedLinksList;
+string const url = "https://www.dinlabel.com/"; //"https://www.dinlabel.com/";//http://gigamonkeys.com/book/";//http://javax.mty.itesm.mx/redes1/
+string folder = "outputs/"; //Make sure this folder exists, if not err 256 is thrown
+string fileName = "insideOutput";
+string command = "";
+string uri = "";
+
 
 //Check if processor is available, if not exit
 void processorAvailableDoNext(){
@@ -81,22 +88,25 @@ void extractURL(string folder, string fileName, string url, string &uri){
   ifstream infile(folder + fileName);
   while (infile >> uri) { //mientras haya linea
       if( visitedLinks.find(url+uri) == visitedLinks.end() && !isPdfOrPpt(uri)){ //si no lo hemos visiatdo el link && Si no es pdf o ppt              //
-          cout << "## Inserting... " << uri << endl;
+          cout << "# Inserting... " << uri << endl;
           linksToVisit.push(uri);                  //la metemos al queue
           visitedLinks.insert(url+uri);           //lo metemos al set
           visitedLinksList.push_back(uri);        //metemos uri a la lista (vector)
-          cout << "XX DONE ------> " << linksToVisit.back() << endl;
+          cout << "XX DONE --> " << linksToVisit.back() << endl;
       }
   }
 }
 
 
+void excecution(){
+    std::cout << "==========> START -- Exc. Thread <==========" << '\n';
+   exLinkSearch(url + uri, command, folder, fileName);  //Get links from front URI
+   extractURL(folder, fileName, url, uri);  //Push new links to the queue
+   std::cout << "==========> END -- Exc. Thread <==========" << '\n';
+}
+
+
 int main(){
-    string const url = "https://www.dinlabel.com/"; //"https://www.dinlabel.com/";//http://gigamonkeys.com/book/";//http://javax.mty.itesm.mx/redes1/
-    string folder = "outputs/"; //Make sure this folder exists, if not err 256 is thrown
-    string fileName = "insideOutput";
-    string command = "";
-    string uri = "";
 
     int n = 1;
     int maxLinks = 0;
@@ -106,19 +116,18 @@ int main(){
       cin >> maxLinks;
     }while(maxLinks > 300);
 
-    exLinkSearch(url, command, folder, fileName);
-
-    extractURL(folder, fileName, url, uri);
+    thread t (excecution);
+    t.join();
 
     while (!linksToVisit.empty() && n <= maxLinks){ //If stuff gets out of control(or page too big) break it at 300
        uri = linksToVisit.front();
-       exLinkSearch(url+uri, command, folder, fileName+to_string(n));  //Get links from front URI
+       thread t2 (excecution);
+       t2.join();
        linksToVisit.pop();
-       extractURL(folder, fileName+to_string(n), url, uri);  //Push new links to the queue
        n++;
     }
 
-    cout << "################################################################################" << endl;
+    cout << "##################################################################" << endl;
     //Display visited URIs
     for(int i=0; i < visitedLinksList.size(); ++i){
       cout << i+1 << ": " << visitedLinksList[i] << endl;
