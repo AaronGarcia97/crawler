@@ -91,8 +91,8 @@ void extractURL(string folder, string fileName, string url, string &uri){
 }
 
 
-int main(){
-    string const url = "https://www.dinlabel.com/"; //"https://www.dinlabel.com/";//http://gigamonkeys.com/book/";//http://javax.mty.itesm.mx/redes1/
+int main(int argc, char *argv[]){
+    string url = "https://www."; // "https://www.dinlabel.com/"; //"https://www.dinlabel.com/";//http://gigamonkeys.com/book/";//http://javax.mty.itesm.mx/redes1/
     string folder = "outputs/"; //Make sure this folder exists, if not err 256 is thrown
     string fileName = "insideOutput";
     string command = "";
@@ -100,6 +100,14 @@ int main(){
 
     int n = 1;
     int maxLinks = 0;
+
+    /* Check you pass domain as argument */
+    if( argc != 2 ) {
+      fprintf(stderr,"Incorrect Format! Use it like this:\n %s [URL] \n %s webpageToBeCrawled.com\n", argv[0], argv[0]);
+	    exit(-1);
+    } else {
+      url += argv[1];
+    }
 
     do{
       cout << "Max links(Limit 300): ";
